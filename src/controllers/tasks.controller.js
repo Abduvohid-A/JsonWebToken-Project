@@ -5,6 +5,7 @@ import {
     taskDelete,
     taskCreate
 } from "../services/tasks.service.js";
+import { taskValidation } from "../validation/task.validation.js";
 
 export const getAllTasks = async (req, res) => {
     try {
@@ -22,7 +23,9 @@ export const getAllTasks = async (req, res) => {
 
 export const getTask = async (req, res) => {
     try {
-        const { ok, values, message, status } = await taskOne();
+        const { id } = req.params;
+
+        const { ok, values, message, status } = await taskOne(id);
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);
@@ -36,7 +39,10 @@ export const getTask = async (req, res) => {
 
 export const putTask = async (req, res) => {
     try {
-        const { ok, values, message, status } = await taskUpdate();
+        const { id } = req.params;
+        const { description } = req.body;
+
+        const { ok, values, message, status } = await taskUpdate(id, description);
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);
@@ -50,7 +56,9 @@ export const putTask = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
     try {
-        const { ok, values, message, status } = await taskDelete();
+        const { id } = req.params;
+
+        const { ok, values, message, status } = await taskDelete(id);
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);
@@ -64,7 +72,11 @@ export const deleteTask = async (req, res) => {
 
 export const createTask = async (req, res) => {
     try {
-        const { ok, values, message, status } = await taskCreate();
+        const { okay, value, messages, statuss } = await taskValidation(req.body);
+
+        if (!okay) return res.status(statuss).json({messages});
+
+        const { ok, values, message, status } = await taskCreate(value);
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);

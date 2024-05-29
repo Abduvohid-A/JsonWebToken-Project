@@ -2,87 +2,123 @@ import Otp from "../models/otp.models.js";
 import User from "../models/users.models.js";
 import jwt from "jsonwebtoken";
 
+export const createUser = async (user) => {
+    try {
+        const newUser = new User(user);
+
+        const saveUser = await newUser.save();
+
+        return {
+            ok: true,
+            values: saveUser,
+            message: '',
+            status: 201
+        };
+
+    } catch (error) {
+        console.log(error);
+
+        return {
+            ok: false,
+            values: "",
+            message: error.message,
+            status: 500
+        };
+    };
+};
+
 export const giveToken = async (user) => {
     try {
-        const isUser = await User.findOne({email : user.email});
+        const isUser = await User.findOne({ email: user.email });
 
-        if (isUser) {
+        if (!isUser) {
             return {
-                ok : false,
-                values : '',
-                message : "Avval ro'yhatdan o'ting ",
-                status : 404
+                ok: false,
+                values: '',
+                message: "Avval ro'yhatdan o'ting ",
+                status: 404
             };
         };
 
-        const token = jwt.sign({ sub : isUser.email}, process.env.JWT_KEY);
+        const token = jwt.sign({ sub: isUser.email }, process.env.JWT_KEY,
+            { expiresIn: process.env.JWT_ACCESS_TIME });
 
         return {
-            ok : true,
-            values : token,
-            message : '',
-            status : 200
+            ok: true,
+            values: token,
+            message: '',
+            status: 200
         };
 
     } catch (error) {
         console.log(error);
 
         return {
-            ok : false,
-            values : "",
-            message : error.message,
-            status : 500
+            ok: false,
+            values: "",
+            message: error.message,
+            status: 500
         };
     };
 };
 
 
-export const createUser = async (newUser) => {
+export const createOtp = async (otp) => {
     try {
-        const user = new User(newUser);
+        const newOtp = new Otp(otp);
 
-        const saveUser = await user.save();
+        const saveOtp = await newOtp.save();
 
         return {
-            ok : true,
-            values : saveUser,
-            message : '',
-            status : 201
+            ok: true,
+            values: saveOtp,
+            message: '',
+            status: 201
         };
 
     } catch (error) {
         console.log(error);
 
         return {
-            ok : false,
-            values : "",
-            message : error.message,
-            status : 500
+            ok: false,
+            values: "",
+            message: error.message,
+            status: 500
         };
     };
 };
 
-export const CheckOtp = async (newUser) => {
+export const CheckOtp = async (checkOtp) => {
     try {
-        const user = new User(newUser);
+        const existOtp = await Otp.findOne({ email: checkOtp.email });
 
-        const saveUser = await user.save();
+        if (!existOtp) {
+
+            return {
+                ok: false,
+                values: "",
+                message: 'Otp not Found',
+                status: 404
+            };
+        };
+
+        await Otp.findByIdAndDlete(existOtp._id);
 
         return {
-            ok : true,
-            values : saveUser,
-            message : '',
-            status : 201
+            ok: true,
+            values: saveUser,
+            message: '',
+            status: 201
         };
 
     } catch (error) {
         console.log(error);
 
         return {
-            ok : false,
-            values : "",
-            message : error.message,
-            status : 500
+            ok: false,
+            values: "",
+            message: error.message,
+            status: 500
         };
     };
 };

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { 
+import {
     registerController,
     loginController,
     otpController

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import tasksRoute from "./tasks.routes.js";
-import { 
+import {
     getAllUsers,
     getUser,
     putUser,

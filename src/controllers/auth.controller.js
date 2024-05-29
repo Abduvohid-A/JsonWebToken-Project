@@ -3,10 +3,11 @@ import {
     giveToken,
     CheckOtp
 } from "../services/auth.service.js";
-import { 
+import {
     registerValidation,
-    loginValidation
- } from "../validation/auth.validation.js";
+    loginValidation,
+    otpValidation
+} from "../validation/auth.validation.js";
 
 
 export const registerController = async (req, res) => {
@@ -20,11 +21,11 @@ export const registerController = async (req, res) => {
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);
-        
+
     } catch (error) {
         console.log(error);
 
-        res.status(500).json({error : error.message});
+        res.status(500).json({ error: error.message });
     };
 };
 
@@ -39,25 +40,29 @@ export const loginController = async (req, res) => {
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);
-        
+
     } catch (error) {
         console.log(error);
 
-        res.status(500).json({error : error.message});
+        res.status(500).json({ error: error.message });
     };
 };
 
 export const otpController = async (req, res) => {
     try {
-        const { ok, values, message, status } = await CheckOtp();
+        const { okay, value, messages, statuss } = await otpValidation(req.body);
+
+        if (!okay) return res.status(statuss).json(messages); 
+
+        const { ok, values, message, status } = await CheckOtp(value);
 
         if (!ok) return res.status(status).json(message);
         else return res.status(status).json(values);
-        
+
     } catch (error) {
         console.log(error);
 
-        res.status(500).json({error : error.message});
+        res.status(500).json({ error: error.message });
     };
 };
 
